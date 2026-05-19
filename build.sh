@@ -51,11 +51,13 @@ install_patch "$HERE/patches/wireless-regdb/600-regdb-ITS.patch" \
 
 # --- 3. Add otm-bridge feed --------------------------------------------------
 
+# OpenWrt's scripts/feeds rejects names containing '-' (only \w allowed),
+# so use an underscore-safe local name; the package itself stays otm-bridge.
+FEED_NAME="otm_bridge"
 FEEDS_CONF="$OWRT_DIR/feeds.conf.default"
-if ! grep -q '^src-git otm-bridge ' "$FEEDS_CONF"; then
-	log "adding otm-bridge feed"
-	echo "src-git otm-bridge $OTM_BRIDGE_FEED" >> "$FEEDS_CONF"
-fi
+sed -i '/^src-git otm[-_]bridge /d' "$FEEDS_CONF"
+log "adding $FEED_NAME feed"
+echo "src-git $FEED_NAME $OTM_BRIDGE_FEED" >> "$FEEDS_CONF"
 
 cd "$OWRT_DIR"
 log "feeds update + install"
