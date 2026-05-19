@@ -1,0 +1,17 @@
+Add an ITS-G5 / 802.11p regulatory entry (5850-5925 MHz @ 20 MHz, 33 dBm
+EIRP) to the DE country regdb so the kernel allows operation on the DSRC
+channels enabled by the ath9k 802.11p patch.
+
+Forward-ported from OpenWrt-V2X 21.02.1 (regdb 21.04 -> regdb 2026.03.18).
+
+--- a/db.txt
++++ b/db.txt
+@@ -591,6 +591,8 @@ country DE: DFS-ETSI
+ 	(5470 - 5725 @ 160), (500 mW), DFS, wmmrule=ETSI
+ 	# short range devices (ETSI EN 300 440-1)
+ 	(5725 - 5875 @ 80), (25 mW)
++	# ITS / 802.11p (5,9 GHz band, ETSI EN 302 571)
++	(5850 - 5925 @ 20), (33)
+ 	# WiFi 6E
+ 	(5945 - 6425 @ 320), (23), NO-OUTDOOR, wmmrule=ETSI
+ 	# 60 GHz band channels 1-4 (ETSI EN 302 567)

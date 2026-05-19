@@ -1,0 +1,7 @@
+openwrt/
+build.log
+*.bin
+*.apk
+*.ipk
+*.swp
+.DS_Store

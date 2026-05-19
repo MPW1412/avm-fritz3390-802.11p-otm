@@ -1,0 +1,27 @@
+            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+                    Version 2, December 2004
+
+ Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
+
+ Everyone is permitted to copy and distribute verbatim or modified
+ copies of this license document, and changing it is allowed as long
+ as the name is changed.
+
+            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+  0. You just DO WHAT THE FUCK YOU WANT TO.
+
+---
+
+NOTE: The kernel patches under `patches/` modify GPL-2.0-only sources
+(Linux mac80211 / ath9k / wireless-regdb). The patch *content* is therefore
+a derivative work of those GPL-2.0 sources and inherits that licence when
+applied. The original 11p extensions were authored by Florian Klingler and
+Gurjashan Singh Pannu (CCS Labs, Paderborn) and ship in the
+github.com/francescoraves483/OpenWrt-V2X project, which is itself
+distributed under GPL-2.0. Their author headers are preserved verbatim in
+each patch.
+
+Only the build orchestration (`build.sh`, `config/`, `README.md`, this
+LICENSE notice) and the `otm-bridge` companion package are WTFPL.

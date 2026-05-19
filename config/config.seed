@@ -1,0 +1,19 @@
+# Seed for `make defconfig` — produces an OpenWrt image for the
+# AVM FRITZ!Box 3390 (lantiq/xrx200) with all packages needed for
+# 802.11p / ITS-G5 reception and the otm-bridge MQTT publisher.
+
+CONFIG_TARGET_lantiq=y
+CONFIG_TARGET_lantiq_xrx200=y
+CONFIG_TARGET_lantiq_xrx200_DEVICE_avm_fritz3390=y
+
+# wpad-mbedtls = "full" (only the full variant can do OCB/monitor)
+# explicitly disable the device-profile-default basic variant
+# CONFIG_PACKAGE_wpad-basic-mbedtls is not set
+CONFIG_PACKAGE_wpad-mbedtls=y
+
+CONFIG_PACKAGE_iw-full=y
+CONFIG_PACKAGE_tcpdump-mini=y
+CONFIG_PACKAGE_socat=y
+
+# Our MQTT bridge + its runtime deps (pulled in transitively)
+CONFIG_PACKAGE_otm-bridge=y

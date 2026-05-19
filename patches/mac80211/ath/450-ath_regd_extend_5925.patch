@@ -1,0 +1,21 @@
+Extend ath common regulatory rules to cover 5850-5925 MHz (ITS-G5 / 802.11p)
+so that the DSRC channels added to ath9k are actually usable.
+
+Forward-ported from OpenWrt-V2X 21.02.1. Applied AFTER OpenWrt's own
+403-world_regd_fixup.patch, which is why ATH_5GHZ_5150_5350 here already
+holds two REG_RULE entries.
+
+--- a/drivers/net/wireless/ath/regd.c
++++ b/drivers/net/wireless/ath/regd.c
+@@ -46,9 +46,9 @@
+ #define ATH_5GHZ_5150_5350	REG_RULE(5150-10, 5240+10, 80, 0, 30, 0),\
+ 				REG_RULE(5260-10, 5350+10, 80, 0, 30,\
+ 					 NL80211_RRF_NO_IR)
+-#define ATH_5GHZ_5470_5850	REG_RULE(5470-10, 5850+10, 80, 0, 30,\
++#define ATH_5GHZ_5470_5850	REG_RULE(5470-10, 5925+10, 80, 0, 30,\
+ 					 NL80211_RRF_NO_IR)
+-#define ATH_5GHZ_5725_5850	REG_RULE(5725-10, 5850+10, 80, 0, 30,\
++#define ATH_5GHZ_5725_5850	REG_RULE(5725-10, 5925+10, 80, 0, 30,\
+ 					 NL80211_RRF_NO_IR)
+
+ #define ATH_2GHZ_ALL		ATH_2GHZ_CH01_11, \

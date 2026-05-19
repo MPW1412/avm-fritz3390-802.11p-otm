@@ -1,0 +1,33 @@
+Skip the 802.1d/QoS-map based priority override in ieee80211_select_queue
+so that packets stay in the EDCA access category chosen explicitly via
+SO_PRIORITY (needed for 802.11p / OCB use cases where the application
+selects AC_VO / AC_VI / AC_BE / AC_BK directly).
+
+Originally by Gurjashan S. Pannu <gspannu@mail.uni-paderborn.de>, 2016-07-27.
+Forward-ported from OpenWrt-V2X 21.02.1 to OpenWrt 25.12.
+
+--- a/net/mac80211/wme.c
++++ b/net/mac80211/wme.c
+@@ -148,7 +148,6 @@ u16 ieee80211_select_queue(struct ieee80
+ 			   struct sta_info *sta, struct sk_buff *skb)
+ {
+ 	const struct ethhdr *eth = (void *)skb->data;
+-	struct mac80211_qos_map *qos_map;
+ 	bool qos;
+
+ 	/* all mesh/ocb stations are required to support WME */
+@@ -175,9 +174,11 @@ u16 ieee80211_select_queue(struct ieee80
+
+ 	/* use the data classifier to determine what 802.1d tag the
+ 	 * data frame has */
+-	qos_map = rcu_dereference(sdata->qos_map);
+-	skb->priority = cfg80211_classify8021d(skb, qos_map ?
+-					       &qos_map->qos_map : NULL);
++	/* OpenWrt-V2X: keep skb->priority as set by the application
++	 * (e.g. via SO_PRIORITY) so EDCA AC selection is preserved
++	 * across the WME/QoS classifier. The 802.1d header re-mapping
++	 * is intentionally skipped here for 802.11p / OCB.
++	 */
+
+  downgrade:
+ 	return ieee80211_downgrade_queue(sdata, sta, skb);
