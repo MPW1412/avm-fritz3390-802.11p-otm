@@ -1,0 +1,50 @@
+From: Matthias Walther <m.walther@kluteq.de>
+Subject: [PATCH] ath9k: force half-rate OFDM for ITS-G5 / DSRC band (5850-5925 MHz)
+
+The 802.11p / ITS-G5 channels at 5850-5925 MHz are regulatorily defined
+as 10 MHz wide. Userspace tooling that tunes the radio to those
+frequencies (e.g. `iw dev mon0 set freq 5890 10MHz`) is supposed to
+also pass the channel width down via cfg80211, but in practice the
+width is often dropped on the way to the driver -- especially for
+monitor-mode interfaces -- and chandef->width arrives as
+NL80211_CHAN_WIDTH_20_NOHT.
+
+Without CHANNEL_HALF set in ichan->channelFlags, the AR9580 PLL,
+clock, and OFDM symbol timing in hw.c / ar9002_phy.c stay at 20 MHz
+full-rate, the demodulator treats half-rate 11p frames as garbage, and
+they get dropped as CRC errors before reaching netdev counters. The
+previously-required workaround (echo 10 >
+/sys/kernel/debug/ieee80211/phyN/ath9k/chanbw) only works because of
+its side effect -- forcing a reconfig/reset -- and is fragile.
+
+Fix this by treating the DSRC band as authoritative: if the tuned
+center frequency lies inside 5850-5925 MHz, set CHANNEL_HALF
+unconditionally and clear any HT/40 MHz flags that don't make sense
+there. This makes update_ichannel produce a correct internal channel
+descriptor regardless of what cfg80211 hands down, and removes the
+need for any userspace debugfs poking.
+
+Signed-off-by: Matthias Walther <m.walther@kluteq.de>
+---
+--- a/drivers/net/wireless/ath/ath9k/common.c
++++ b/drivers/net/wireless/ath/ath9k/common.c
+@@ -346,6 +346,19 @@
+ 		WARN_ON(1);
+ 	}
+ 
++	/*
++	 * ITS-G5 / DSRC: 5850-5925 MHz channels are regulatorily defined
++	 * as 10 MHz wide. cfg80211 / iw sometimes loses the width on the
++	 * way down (especially for monitor-mode interfaces) and we end up
++	 * here with chandef->width = NL80211_CHAN_WIDTH_20_NOHT. Force
++	 * half-rate based on the frequency alone so the PLL/PHY in hw.c
++	 * and ar9002_phy.c reprogram correctly without needing the chanbw
++	 * debugfs workaround.
++	 */
++	if (chan->band == NL80211_BAND_5GHZ &&
++	    chan->center_freq >= 5850 && chan->center_freq <= 5925)
++		flags = (flags & CHANNEL_5GHZ) | CHANNEL_HALF;
++
+ 	ichan->channelFlags = flags;
+ }
+ 
