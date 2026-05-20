@@ -91,7 +91,7 @@ power-on — see the OpenWrt wiki for the canonical procedure.
 * `Allow-SSH-WAN` firewall rule (port 22 reachable from the WAN side)
 * hostname `opentrafficmap` → typically resolvable as `opentrafficmap.lan`
   via mDNS / your router's DHCP
-* `mon0` = monitor on channel 178 (5890 MHz, 10 MHz width)
+* `mon0` = monitor on channel 180 (5900 MHz, 10 MHz width) — EU ITS-G5 CCH
 * WLAN-LED trigger `phy0rx` → LED blinks on every captured frame
 * `tcpdump` rotating into `/tmp/mon0-YYYYMMDD-HHMMSS.pcapN` (5 × 1 MB ring)
 * MQTT bridge live to `mqtts://cits1.opentrafficmap.org`, node-id =
